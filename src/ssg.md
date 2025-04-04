@@ -72,6 +72,7 @@ File structure:
 src/routes.tsx   // React Router routes for our app
 src/main.tsx     // Normal main file
 src/ssg-main.tsx // Main file for ssg
+src/index.html   // Default index file in Vite
 src/...          // the rest of the blog
 ssg.tsx          // build script
 ssg-for-vite.tsx // our plugin
@@ -136,6 +137,24 @@ hydrateRoot(
     <RouterProvider router={router} />
   </React.StrictMode>,
 );
+```
+
+---
+
+`index.html`:
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TheKnarf</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>
 ```
 
 ---
