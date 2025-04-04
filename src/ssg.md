@@ -170,10 +170,20 @@ await build({
 #!/usr/bin/env -S vite-node --script
 ```
 
+`package.json`:
+
+```json
+{
+  "scripts": {
+    "build": "./ssg.tsx",
+  }
+}
+```
+
 To run the script:
 
 ```bash
-$ ./ssg.tsx
+$ pnpm build
 ```
 
 ---
@@ -318,6 +328,14 @@ export default ssgPlugin;
 ---
 
 ```typescript
+import {
+  createStaticHandler,
+  createStaticRouter,
+  StaticRouterProvider,
+} from 'react-router';
+```
+
+```typescript
 const renderHtml = async (path, routes) => {
   const { query, dataRoutes } = createStaticHandler(routes);
   const url = new URL(path, 'http://localhost/');
@@ -327,6 +345,14 @@ const renderHtml = async (path, routes) => {
     signal: new AbortController().signal,
   }));
   const router = createStaticRouter(dataRoutes, context);
+  
+  // continues on next slide
+```
+
+---
+
+```typescript showLineNumbers{11}
+  // continued from last slide
 
   const app = <html lang="en">
     <head>
@@ -342,6 +368,8 @@ const renderHtml = async (path, routes) => {
       <script type="module" src="/ssg-main.tsx"></script>
     </body>
   </html>;
+
+  // continues on next slide
 ```
 
 ---
@@ -368,6 +396,42 @@ import { WritableStreamBuffer } from 'stream-buffers';
   return writableStream.getContentsAsString('utf8');
 }
 ```
+
+---
+
+```bash
+$ pnpm build
+
+> @ build /Users/knarf/projects/theknarf/theknarf.github.io
+> ./ssg.tsx
+
+Running Vite build with SSG setup (Static site generation)
+
+vite v5.3.1 building for production...
+✓ 143 modules transformed.
+../dist/post/index.html                                1.21 kB │ gzip:   0.64 kB
+../dist/index.html                                     1.32 kB │ gzip:   0.70 kB
+../dist/post/macos-gif/index.html                      5.23 kB │ gzip:   1.62 kB
+../dist/post/post1/index.html                         12.52 kB │ gzip:   4.04 kB
+../dist/assets/screen-recording-tool-CVLr4XD-.png  1,229.17 kB
+../dist/assets/ssg-main-BYAw0POh.css                   4.05 kB │ gzip:   1.15 kB
+../dist/assets/vendor-D8m-Dqkf.css                    14.91 kB │ gzip:   3.12 kB
+../dist/assets/ssg-main-BhWi9ZoR.js                   57.19 kB │ gzip:  13.09 kB
+../dist/assets/vendor-CzoGOkGm.js                    478.51 kB │ gzip: 149.43 kB
+✓ built in 2.90s
+```
+
+---
+
+# Conclusion
+
+- Vite Runner to write `tsx` files in our plugin
+
+- Uses React's built inn `renderToPipeableStream` to make HTML files
+
+- Vite does the rest for us
+
+- The finished build can be deployed on Github Page's
 
 ---
 
