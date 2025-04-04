@@ -42,7 +42,20 @@ $ pnpm add -D vite-node stream-buffers
 
 ---
 
-`routes.tsx`:
+File structure:
+
+```javascript
+src/routes.tsx   // React Router routes for our app
+src/main.tsx     // Normal main file
+src/ssg-main.tsx // Main file for ssg
+src/...          // the rest of the blog
+ssg.tsx          // build script
+ssg-for-vite.tsx // our plugin
+```
+
+---
+
+`src/routes.tsx`:
 
 ```typescript
 import App, { Home, Blog, Post  } from './app.tsx';
@@ -63,7 +76,7 @@ export const routes = [{
 
 ---
 
-`main.tsx`:
+`src/main.tsx`:
 ```typescript
 import React from 'react';
 import { createRoot } from 'react-dom/client';
@@ -83,7 +96,7 @@ root.render(
 
 ---
 
-`ssg-main.tsx`:
+`src/ssg-main.tsx`:
 ```typescript
 import React from 'react';
 import { hydrateRoot } from 'react-dom/client';
@@ -107,7 +120,7 @@ hydrateRoot(
 ```typescript
 #!/usr/bin/env -S VITE_NODE=true vite-node --script
 import { build } from 'vite';
-import ssgPlugin from './vite-react-router-ssg-plugin.tsx';
+import ssgPlugin from './ssg-for-vite.tsx';
 
 const viteConfig = (await import('./vite.config.ts')).default;
 const ssgPluginConfig = {
@@ -126,7 +139,20 @@ await build({
 
 ---
 
-`vite-react-router-ssg-plugin.tsx`:
+Structure of `ssg.tsx` build script:
+
+```
+┌──────────────┐     ┌───────┐                    
+│ ./src/routes ├────►│       │  ┌────────────────┐
+└──────────────┘     │ssg.tsx├─►│ssg-for-vite.tsx│
+┌─────────────────┐  │       │  └────────────────┘
+│./vite.config.ts ├─►│       │                    
+└─────────────────┘  └───────┘                    
+```
+
+---
+
+`ssg-for-vite.tsx`:
 ```typescript
 function ssgPlugin({ routes, mainScript }) : Plugin {
   const paths = routesToPaths(routes);
@@ -135,15 +161,14 @@ function ssgPlugin({ routes, mainScript }) : Plugin {
     name: 'ssg-plugin',
 
     // Add all routes in the `paths` array as chunks
-    buildStart() {
-    },
+    buildStart() { /* .. */},
+
     // resolveId just matches up files that we later want to handle in load
     // without it we don't get to load the files in this plugin
-    resolveId(id) {
-    },
+    resolveId(id) { /* .. */ },
+
     // build page
-    async load( id ) {
-    },
+    async load(id) { /* .. */ },
   };
 }
 
@@ -152,7 +177,7 @@ export default ssgPlugin;
 
 ---
 
-`vite-react-router-ssg-plugin.tsx`:
+`ssg-for-vite.tsx`:
 ```typescript
     // Add all routes in the `paths` array as chunks
     buildStart() {
@@ -207,7 +232,7 @@ into this:
 
 ---
 
-`vite-react-router-ssg-plugin.tsx`:
+`ssg-for-vite.tsx`:
 ```typescript
 function ssgPlugin({ routes, mainScript }) : Plugin {
   const paths = routesToPaths(routes);
@@ -216,14 +241,15 @@ function ssgPlugin({ routes, mainScript }) : Plugin {
     name: 'ssg-plugin',
 
     // Add all routes in the `paths` array as chunks
-    buildStart() {
-    },
+    buildStart() { /* .. */ },
+
     // resolveId just matches up files that we later want to handle in load
     // without it we don't get to load the files in this plugin
-    resolveId(id) {
-    },
+    resolveId(id) { /* .. */ },
+
     // build page
-    async load( id ) {
+    async load(id) {
+      // Lets look at this part
     },
   };
 }
@@ -233,7 +259,7 @@ export default ssgPlugin;
 
 ---
 
-`vite-react-router-ssg-plugin.tsx`:
+`ssg-for-vite.tsx`:
 ```typescript
     // build page
     async load( id ) {
@@ -308,16 +334,5 @@ import { WritableStreamBuffer } from 'stream-buffers';
 
 https://github.com/TheKnarf/theknarf.github.io
 
----
 
-TODO
-
-- project structure
-- `./src/main.tsx` and `./src/main_ssg.tsx`
-- The router file
-- The Vite file
-- Our own "ssg_for_vite"
-  - explain why we need `vite-node`
-  - go through each part of that code
-  - explain what React provides
-  - explain the trick of making multiple `index.html` file for Vite to build
+https://theknarf.com/
