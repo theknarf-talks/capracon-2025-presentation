@@ -8,8 +8,8 @@ style: "dark"
 
 # Me
 
-Frank Lyder Bredland <br />
-_Senior Software Developer @ Capra Consulting_
+**Bredland, Frank Lyder** <br />
+_Senior Software Developer @ Capra_
 
 Re-inventor of wheels
 
@@ -19,12 +19,36 @@ https://theknarf.com/
 
 # Goal
 
+<Reveal currentId={1}>
+
 - Create a Static Site Generator
+
+</Reveal>
+<Reveal currentId={2}>
+
 - It should work with Github Pages
+
+</Reveal>
+<Reveal currentId={3}>
+
 - Using Vite as bundler
+
+</Reveal>
+<Reveal currentId={4}>
+
 - React Router as routing library
+
+</Reveal>
+<Reveal currentId={5}>
+
 - Create html files for each route
+
+</Reveal>
+<Reveal currentId={6}>
+
 - All in under **250 lines of code**!
+
+</Reveal>
 
 ---
 
@@ -116,25 +140,40 @@ hydrateRoot(
 
 ---
 
+# let's look at our build script
+
+---
+
 `ssg.tsx`:
 ```typescript
-#!/usr/bin/env -S VITE_NODE=true vite-node --script
+#!/usr/bin/env -S vite-node --script
 import { build } from 'vite';
 import ssgPlugin from './ssg-for-vite.tsx';
 
 const viteConfig = (await import('./vite.config.ts')).default;
-const ssgPluginConfig = {
-  routes: (await import('./src/routes')).routes,
-  mainScript: '/ssg-main.tsx',
-}
 
 await build({
   ...viteConfig,
   plugins: [
-    ssgPlugin(ssgPluginConfig),
+    ssgPlugin({
+      routes: (await import('./src/routes')).routes,
+    }),
     ...(viteConfig.plugins),
   ],
 });
+```
+
+---
+
+`ssg.tsx`:
+```typescript
+#!/usr/bin/env -S vite-node --script
+```
+
+To run the script:
+
+```bash
+$ ./ssg.tsx
 ```
 
 ---
@@ -262,14 +301,14 @@ export default ssgPlugin;
 `ssg-for-vite.tsx`:
 ```typescript
     // build page
-    async load( id ) {
+    async load(id) {
       const path = paths.find(path => {
         const idFromPath = fileNameFromPath(path);					
         return idFromPath === id;
       });
 
       if(path) {
-        return await renderHtml(path, routes, mainScript);
+        return await renderHtml(path, routes);
       }
 
       return null;
@@ -279,9 +318,9 @@ export default ssgPlugin;
 ---
 
 ```typescript
-const renderHtml = async (path, routes, mainScript) => {
+const renderHtml = async (path, routes) => {
   const { query, dataRoutes } = createStaticHandler(routes);
-  const url = new URL(path, 'http://localhost/')
+  const url = new URL(path, 'http://localhost/');
   url.pathname = path;
 
   const context = await query(new Request(url.href, {
@@ -300,7 +339,7 @@ const renderHtml = async (path, routes, mainScript) => {
           <StaticRouterProvider router={router} context={context} />
         </React.StrictMode>
       </div>
-      <script type="module" src={mainScript}></script>
+      <script type="module" src="/ssg-main.tsx"></script>
     </body>
   </html>;
 ```
@@ -334,5 +373,6 @@ import { WritableStreamBuffer } from 'stream-buffers';
 
 https://github.com/TheKnarf/theknarf.github.io
 
+--
 
 https://theknarf.com/
