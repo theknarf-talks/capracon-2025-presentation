@@ -370,7 +370,7 @@ const renderHtml = async (path, routes) => {
 
 ---
 
-```typescript showLineNumbers{11}
+```typescript
   // continued from last slide
 
   const app = <html lang="en">
