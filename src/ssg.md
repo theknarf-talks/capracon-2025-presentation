@@ -2,6 +2,10 @@
 style: "dark"
 ---
 
+_blank slide_
+
+---
+
 # Building your own Static Site Generator with Vite & React Router
 
 ---
@@ -14,6 +18,15 @@ _Senior Software Developer @ Capra_
 Re-inventor of wheels
 
 https://theknarf.com/
+
+
+---
+
+Whats a Static Site Generator?
+
+Why is a Static Site Generator?
+
+Show https://theknarf.com/
 
 ---
 
